@@ -1,0 +1,29 @@
+version: '3.8'
+
+services:
+  portfolio:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    restart: unless-stopped
+    container_name: rhaenyra-portfolio
+    volumes:
+      - "./data:/app/data"
+    environment:
+      # Flask settings
+      - FLASK_ENV=production
+      - FLASK_DEBUG=0
+      - ADMIN_TOKEN=admin-secret-token-2026
+      # Reverse proxy (jwilder/nginx-proxy + acme-companion)
+      - VIRTUAL_HOST=rhaenyra.trungtero.com
+      - VIRTUAL_PORT=3000
+      - LETSENCRYPT_HOST=rhaenyra.trungtero.com
+      - LETSENCRYPT_EMAIL=trungnguyen.19972707@gmail.com
+    ports:
+      - "3000:3000"
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:3000/"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 30s
